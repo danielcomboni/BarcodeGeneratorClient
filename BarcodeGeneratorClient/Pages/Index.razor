@@ -1,18 +1,55 @@
 ﻿@page "/"
 @inject NavigationManager NavMgr ;
 @inject HttpClient Http ;
-@using ZXing ;
+@using ZXing 
 @*@inject INavigate Navigate ;*@
 
 <h3>GenerateBarcode</h3>
 
-<input type="text" @bind="TheContent" @bind:event="oninput" />
-<input type="text" @bind="Height" @bind:event="oninput" />
-<input type="text" @bind="Width" @bind:event="oninput" />
-<input type="text" @bind="Margin" @bind:event="oninput" />
+<form class="form-inline">
 
-<button @onclick="(() => TestQrCode ( TheContent , Height, Width, Margin))">QR Code</button>
-<button @onclick="(() => TestPDF_417 ( TheContent, Height, Width, Margin ))">PDF 417</button>
+    <div class="form-group">
+
+        <div class="form-group row">
+            <label for="content" class="col-sm-2 col-form-label">Content</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" id="content" type="text" @bind="TheContent" @bind:event="oninput"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="height" class="col-sm-2 col-form-label">Height</label>
+            <input class="form-control" id="height" type="text" @bind="Height" @bind:event="oninput" />
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="width" class="col-sm-2 col-form-label">Width</label>
+            <input class="form-control" id="width" type="text" @bind="Width" @bind:event="oninput" />
+        </div>
+
+        <div class="form-group mb-2">
+            <label class="col-sm-2 col-form-label">Margin</label>
+            <input class="form-control" type="text" @bind="Margin" @bind:event="oninput" />
+        </div>
+
+        <div class="form-group mb-2">
+            <label class="col-sm-2 col-form-label">Count:<b>@CharacterCount()</b></label>
+            <em  ></em>
+
+        </div>
+
+        <div class="form-group mb-2">
+            <button @onclick="(() => TestQrCode ( TheContent , Height, Width, Margin))" @onclick:preventDefault="true" class="btn btn-primary btn-outline-dark">QR Code</button>
+            <button @onclick="(() => TestPDF_417 ( TheContent, Height, Width, Margin ))" @onclick:preventDefault="true" class="btn btn-primary btn-outline-dark">PDF 417 Code</button>
+        </div>
+
+    </div>
+
+</form>
+
+
+
+
 
 @*<label>@Test</label>*@
 <br />
@@ -25,13 +62,11 @@
 
 @code {
 
-    private string TheContent { get; set; } = "Daniel";
+    private string TheContent { get; set; } = "sample text to be encoded";
     private int Height { get; set; } = 300;
     private int Width { get; set; } = 900;
     private int Margin { get; set; } = 2;
     private string Image { get; set; }
-
-
 
     private async Task TestQrCode(string value, int Height, int Width, int Margin)
     {
@@ -46,8 +81,6 @@
 
         @*ImageScan.ImageScanResult = Image ;
             NavMgr.NavigateTo("/scanCode");*@
-
-
 
         @*Console.WriteLine($"result.content: {base64}");*@
     }
@@ -65,9 +98,10 @@
         @*ImageScan.ImageScanResult = Image ;
             NavMgr.NavigateTo("/scanCode");*@
 
-
         @*Console.WriteLine($"result.content: {base64}");*@
     }
+
+    private int CharacterCount ( ) => TheContent.Length ;
 
     string[] sizes = new[] { "A3", "A4", "A5", "letter", "legal" };
 
