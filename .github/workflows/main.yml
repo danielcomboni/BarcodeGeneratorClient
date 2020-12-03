@@ -69,5 +69,6 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@3.7.1
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: master
+        BASE_BRANCH: development # The branch the action should deploy from.
+        BRANCH: master # The branch the action should deploy to.
         FOLDER: release/wwwroot
