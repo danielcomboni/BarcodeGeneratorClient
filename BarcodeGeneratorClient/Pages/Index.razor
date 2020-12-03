@@ -1,0 +1,88 @@
+﻿@page "/"
+@inject NavigationManager NavMgr ;
+@inject HttpClient Http ;
+@using ZXing ;
+@*@inject INavigate Navigate ;*@
+
+<h3>GenerateBarcode</h3>
+
+<input type="text" @bind="TheContent" @bind:event="oninput" />
+<input type="text" @bind="Height" @bind:event="oninput" />
+<input type="text" @bind="Width" @bind:event="oninput" />
+<input type="text" @bind="Margin" @bind:event="oninput" />
+
+<button @onclick="(() => TestQrCode ( TheContent , Height, Width, Margin))">QR Code</button>
+<button @onclick="(() => TestPDF_417 ( TheContent, Height, Width, Margin ))">PDF 417</button>
+
+@*<label>@Test</label>*@
+<br />
+<br />
+<br />
+<img src="@Image" alt="" />
+
+@*<button class="btn btn-primary btn-lg" @onclick="@OnPrint">Print</button>*@
+
+
+@code {
+
+    private string TheContent { get; set; } = "Daniel";
+    private int Height { get; set; } = 300;
+    private int Width { get; set; } = 900;
+    private int Margin { get; set; } = 2;
+    private string Image { get; set; }
+
+
+
+    private async Task TestQrCode(string value, int Height, int Width, int Margin)
+    {
+
+        var result = await Http.PostAsJsonAsync("api/encode", new EncodedViewModel { Content = value, BarcodeFormat = BarcodeFormat.QR_CODE, Height = Height, Width = Width, Margin = Margin });
+        var data = result.Content.ReadAsByteArrayAsync();
+        @*var data = result.Content.ReadAsStringAsync(  );*@
+
+        var base64 = Convert.ToBase64String(data.Result);
+        var imgSrc = $"data:image/gif;base64,{base64}";
+        Image = imgSrc;
+
+        @*ImageScan.ImageScanResult = Image ;
+            NavMgr.NavigateTo("/scanCode");*@
+
+
+
+        @*Console.WriteLine($"result.content: {base64}");*@
+    }
+
+    private async Task TestPDF_417(string value, int Height, int Width, int Margin)
+    {
+
+        var result = await Http.PostAsJsonAsync("api/encode", new EncodedViewModel { Content = value, BarcodeFormat = BarcodeFormat.PDF_417, Height = Height, Width = Width, Margin = Margin });
+        var data = result.Content.ReadAsByteArrayAsync();
+        @*var data = result.Content.ReadAsStringAsync(  );*@
+
+        var base64 = Convert.ToBase64String(data.Result);
+        var imgSrc = $"data:image/gif;base64,{base64}";
+        Image = imgSrc;
+        @*ImageScan.ImageScanResult = Image ;
+            NavMgr.NavigateTo("/scanCode");*@
+
+
+        @*Console.WriteLine($"result.content: {base64}");*@
+    }
+
+    string[] sizes = new[] { "A3", "A4", "A5", "letter", "legal" };
+
+    string[] paddings = new[] { "padding-10mm", "padding-15mm", "padding-20mm", "padding-25mm" };
+
+    string[] multiples = new[] { "1", "2", "3", "4", "5" };
+
+    void OnPrint()
+    {
+        NavMgr.NavigateTo("/print");
+    }
+
+    void OnPrintGraph()
+    {
+        NavMgr.NavigateTo("/printgraph");
+    }
+
+}
