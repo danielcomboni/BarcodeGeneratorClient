@@ -30,7 +30,7 @@ namespace BarcodeGeneratorClient
 
             var uri = builder.HostEnvironment;
             Console.WriteLine("host env: " + uri);
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44382/") });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://barcodegeneratorapi.azurewebsites.net/") });
 
             //builder.Services.AddScoped<INavigate, Navigate>();
             //builder.Services.AddScoped<ICountryDataService, CountryDataService>();
